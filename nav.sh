@@ -3,7 +3,7 @@
 # remember: (1) run in source  (2) reserve -* for options
 # usage:
 # . nav.sh [keyword] - go to dir of keyword
-# . nav.sh -s [keyword] [dir] - set keyword and dir in list_nav.txt
+# . nav.sh [-s dir] [keyword] - set keyword and dir in list_nav.txt
 # . nav.sh -l - list all keywords and corresponding dirs
 new_dir=''
 OPTIND=1
@@ -32,13 +32,14 @@ while getopts "s:l:" op; do
             echo "Usage: . $0 [-s dir] [-l list] [keyword]" 1>&2 
     esac
 done
-
+shift $((OPTIND - 1))
 if [[ $new_dir == '' ]] ; then
-    shift $((OPTIND - 1))
     while IFS="" read -r p || [ -n "$p" ]
     do
         if [[ $(echo $p | awk '{ print $1 }') == "$@" ]] ; then
             cd $(echo $p | awk '{ print $2 }')
         fi
     done <$source_dir/list_nav.txt
+else
+    echo "$@ ${new_dir}" >> $source_dir/list_nav.txt
 fi
