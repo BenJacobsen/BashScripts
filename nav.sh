@@ -3,9 +3,10 @@
 # remember: (1) run in source  (2) reserve -* for options
 # usage:
 # . nav.sh [keyword] - go to dir of keyword
-# . nav.sh -s [keyword] [dir] - set keyword and dir in nav.txt
+# . nav.sh -s [keyword] [dir] - set keyword and dir in list_nav.txt
 # . nav.sh -l - list all keywords and corresponding dirs
 new_dir=''
+OPTIND=1
 source_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 while getopts "s:l:" op; do
     case "${op}" in
@@ -31,3 +32,13 @@ while getopts "s:l:" op; do
             echo "Usage: . $0 [-s dir] [-l list] [keyword]" 1>&2 
     esac
 done
+
+if [[ $new_dir == '' ]] ; then
+    shift $((OPTIND - 1))
+    while IFS="" read -r p || [ -n "$p" ]
+    do
+        if [[ $(echo $p | awk '{ print $1 }') == "$@" ]] ; then
+            cd $(echo $p | awk '{ print $2 }')
+        fi
+    done <$source_dir/list_nav.txt
+fi
