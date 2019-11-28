@@ -4,17 +4,18 @@
 # use:
 # . nav.sh [keyword] - go to dir of keyword
 # . nav.sh -s [keyword] [dir] - set keyword and dir in nav.txt
-
-if [[ ${$1:0:1} == "-" ]] ; then
-    case ${$1:1:${#$1}-1} in
+# . nav.sh -l - list all keywords and corresponding dirs
+while getopts "s:l:" op; do
+    case "${op}" in
         s)
-#            if [[ ! -f $PWD/nav.txt ]] ; then
-#                touch $PWD/nav.txt
-#            fi
-            echo "-s"
+            DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+            if [[ ! -f $DIR/nav.txt ]] ; then
+                touch $DIR/nav.txt
+            fi
+        ;;
+        l)
         ;;
         *)
-            echo "Unrecognized option"
-        ;;
+            echo "Usage: . $0 [-s dir] [-l list] [keyword]" 1>&2 
     esac
-fi
+done
